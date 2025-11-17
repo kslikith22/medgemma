@@ -1,4 +1,3 @@
-// lib/screens/patient/patient_medicine_tab.dart
 import 'package:flutter/material.dart';
 import 'package:medgemma/core/theme/app_colors.dart';
 import 'package:medgemma/models/user_type.dart';
@@ -29,272 +28,330 @@ class _PatientMedicineTabState extends State<PatientMedicineTab> {
       ..sort((a, b) => b.prescribedDate.compareTo(a.prescribedDate));
 
     return prescribedMedicines.isEmpty
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.medication_outlined,
-                  size: 80,
-                  color: AppColors.textLight,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'No prescribed medicines',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Your doctor-recommended medicines will appear here.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          )
+        ? _emptyState()
         : ListView.separated(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             itemCount: prescribedMedicines.length,
-            separatorBuilder: (_, __) => SizedBox(height: 12),
-            itemBuilder: (context, i) {
-              final prescribed = prescribedMedicines[i];
-              final medicine = MedicineMockData.medicines.firstWhere(
-                (m) => m.id == prescribed.medicineId,
-                orElse: () => Medicine(
-                  id: '',
-                  name: 'Unknown',
-                  subcategoryId: '',
-                  manufacturer: '',
-                  description: '',
-                  price: 0,
-                  strength: '',
-                  packSize: '',
-                  requiresPrescription: true,
-                  imageUrl: '',
-                  uses: [],
-                  sideEffects: [],
-                ),
-              );
-              final doctor = MockData.users.firstWhere(
-                (u) => u.id == prescribed.doctorId,
-                orElse: () => User(
-                  id: '',
-                  fullName: 'Doctor',
-                  email: '',
-                  password: '',
-                  userType: UserType.doctor,
-                  phone: '',
-                  profileImage: '',
-                ),
-              );
-
-              return Card(
-                color: prescribed.isOrdered
-                    ? AppColors.success.withOpacity(0.05)
-                    : AppColors.cardBackground,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: prescribed.isOrdered
-                      ? BorderSide(color: AppColors.success, width: 1)
-                      : BorderSide.none,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Medicine title and subtitle
-                      Row(
-                        children: [
-                          Icon(Icons.medication,
-                              color: AppColors.primary, size: 30),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  medicine.name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                Text(
-                                  medicine.strength,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (!prescribed.isOrdered)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.chartPurple.withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                'NEW',
-                                style: TextStyle(
-                                  color: AppColors.chartPurple,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            )
-                          else
-                            Icon(Icons.check_circle, color: AppColors.success)
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Icon(Icons.person_outline,
-                              size: 16, color: AppColors.textSecondary),
-                          SizedBox(width: 4),
-                          Text(
-                            doctor.fullName,
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Spacer(),
-                          Icon(Icons.schedule,
-                              size: 15, color: AppColors.textLight),
-                          Text(
-                            ' ${prescribed.prescribedDate.day}/${prescribed.prescribedDate.month}/${prescribed.prescribedDate.year}',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textLight,
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(height: 18),
-                      // Prescription details
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _smallInfo('Dosage', prescribed.dosage),
-                          _smallInfo('Frequency', prescribed.frequency),
-                          _smallInfo('Days', '${prescribed.durationDays}')
-                        ],
-                      ),
-                      if (prescribed.instructions.isNotEmpty) ...[
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.info,
-                                size: 14, color: AppColors.chartBlue),
-                            SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                prescribed.instructions,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      SizedBox(height: 14),
-                      // Price and Action
-                      Row(
-                        children: [
-                          Text(
-                            '₹${medicine.price.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          Spacer(),
-                          if (!prescribed.isOrdered)
-                            ElevatedButton.icon(
-                              onPressed: () => _confirmOrder(prescribed),
-                              icon:
-                                  Icon(Icons.shopping_cart_outlined, size: 17),
-                              label: Text('Order Now'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: AppColors.textWhite,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            )
-                          else
-                            OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: Icon(Icons.receipt_long, size: 17),
-                              label: Text('Ordered'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.success,
-                                side: BorderSide(color: AppColors.success),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            itemBuilder: (context, i) =>
+                _buildMedicineCard(prescribedMedicines[i]),
           );
   }
 
-  Widget _smallInfo(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 11, color: AppColors.textLight),
+  // ---------------- EMPTY STATE ------------------
+
+  Widget _emptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.medication_liquid_outlined,
+                size: 80, color: AppColors.textLight),
+            const SizedBox(height: 20),
+            Text(
+              'No prescribed medicines yet',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Your doctor’s prescribed medicines will appear here.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 15,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-        SizedBox(height: 2),
+      ),
+    );
+  }
+
+  // -------------- MEDICINE CARD --------------------
+
+  Widget _buildMedicineCard(PrescribedMedicine prescribed) {
+    final medicine = MedicineMockData.medicines.firstWhere(
+      (m) => m.id == prescribed.medicineId,
+      orElse: () => Medicine(
+        id: '',
+        name: 'Unknown Medicine',
+        subcategoryId: '',
+        manufacturer: '',
+        description: '',
+        price: 0,
+        strength: '',
+        packSize: '',
+        requiresPrescription: true,
+        imageUrl: '',
+        uses: [],
+        sideEffects: [],
+      ),
+    );
+
+    final doctor = MockData.users.firstWhere(
+      (u) => u.id == prescribed.doctorId,
+      orElse: () => User(
+        id: '',
+        fullName: 'Your Doctor',
+        email: '',
+        password: '',
+        userType: UserType.doctor,
+        phone: '',
+        profileImage: '',
+      ),
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: prescribed.isOrdered
+              ? AppColors.success
+              : AppColors.border.withOpacity(0.4),
+          width: prescribed.isOrdered ? 1.2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ----------------------------------------------------------
+          // TOP ROW: MEDICINE NAME + "NEW" BADGE / CHECK ICON
+          // ----------------------------------------------------------
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.medication_rounded,
+                    size: 28, color: AppColors.primary),
+              ),
+
+              const SizedBox(width: 12),
+
+              // NAME + STRENGTH
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      medicine.name,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      medicine.strength,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // BADGE
+              prescribed.isOrdered
+                  ? Icon(Icons.check_circle, color: AppColors.success, size: 22)
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'NEW',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+            ],
+          ),
+
+          const SizedBox(height: 14),
+
+          // ----------------------------------------------------------
+          // DOCTOR + DATE
+          // ----------------------------------------------------------
+          Row(
+            children: [
+              Icon(Icons.person_outline,
+                  size: 16, color: AppColors.textSecondary),
+              const SizedBox(width: 6),
+              Text(
+                doctor.fullName,
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+              ),
+              const Spacer(),
+              Icon(Icons.calendar_month, size: 16, color: AppColors.textLight),
+              const SizedBox(width: 4),
+              Text(
+                '${prescribed.prescribedDate.day}/${prescribed.prescribedDate.month}/${prescribed.prescribedDate.year}',
+                style: TextStyle(color: AppColors.textLight, fontSize: 13),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+          Divider(color: AppColors.border.withOpacity(0.6)),
+          const SizedBox(height: 10),
+
+          // ----------------------------------------------------------
+          // DOSAGE ROW
+          // ----------------------------------------------------------
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _infoTile('Dosage', prescribed.dosage),
+              _infoTile('Frequency', prescribed.frequency),
+              _infoTile('Duration', '${prescribed.durationDays} days'),
+            ],
+          ),
+
+          if (prescribed.instructions.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline, size: 16, color: AppColors.primary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    prescribed.instructions,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 10),
+
+          // ----------------------------------------------------------
+          // PRICE + ACTION BUTTON
+          // ----------------------------------------------------------
+          Row(
+            children: [
+              Text(
+                '₹${medicine.price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+              const Spacer(),
+              prescribed.isOrdered
+                  ? _orderedButton()
+                  : _orderNowButton(prescribed),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  // ------------------ SMALL INFO BLOCK ------------------
+  Widget _infoTile(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        const SizedBox(height: 3),
         Text(
           value,
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
           ),
-        )
+        ),
       ],
     );
   }
 
+  // ------------------ ORDER BUTTONS ------------------
+
+  Widget _orderNowButton(PrescribedMedicine prescribed) {
+    return ElevatedButton.icon(
+      onPressed: () => _confirmOrder(prescribed),
+      icon: const Icon(
+        Icons.shopping_cart_outlined,
+        size: 18,
+        color: Colors.white,
+      ),
+      label: const Text('Order Now'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _orderedButton() {
+    return OutlinedButton.icon(
+      onPressed: () {},
+      icon: Icon(Icons.receipt_long, size: 18, color: AppColors.success),
+      label: Text(
+        'Ordered',
+        style: TextStyle(color: AppColors.success),
+      ),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.success),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  // ---------------- CONFIRM ORDER --------------------
+
   void _confirmOrder(PrescribedMedicine prescribed) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Order Medicine'),
-        content: Text('Confirm order for ${prescribed.medicineId}?'),
+      builder: (_) => AlertDialog(
+        title: const Text('Confirm Order'),
+        content: Text(
+          'Order medicine: ${prescribed.medicineId}?',
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('No'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -302,6 +359,7 @@ class _PatientMedicineTabState extends State<PatientMedicineTab> {
                 final idx = MedicineMockData.prescribedMedicines.indexWhere(
                   (pm) => pm.id == prescribed.id,
                 );
+
                 if (idx != -1) {
                   MedicineMockData.prescribedMedicines[idx] =
                       PrescribedMedicine(
@@ -314,14 +372,16 @@ class _PatientMedicineTabState extends State<PatientMedicineTab> {
                     durationDays: prescribed.durationDays,
                     instructions: prescribed.instructions,
                     prescribedDate: prescribed.prescribedDate,
-                    isOrdered: true,
+                    isOrdered: true, // 🔥 mark as ordered
                   );
                 }
               });
+
               Navigator.pop(context);
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Order placed!'),
+                  content: const Text('Order placed!'),
                   backgroundColor: AppColors.success,
                 ),
               );
@@ -329,7 +389,7 @@ class _PatientMedicineTabState extends State<PatientMedicineTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
             ),
-            child: Text('Confirm'),
+            child: const Text('Confirm'),
           ),
         ],
       ),

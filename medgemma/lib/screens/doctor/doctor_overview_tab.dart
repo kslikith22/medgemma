@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:medgemma/core/theme/app_colors.dart';
 import 'package:medgemma/screens/doctor/consultation_screen.dart';
+import 'package:medgemma/screens/ecg_upload_card.dart';
 import 'package:medgemma/service/appointment_service.dart';
 import 'package:medgemma/service/patient_service.dart';
 
@@ -187,9 +188,15 @@ class DoctorOverviewTab extends StatelessWidget {
             ),
           ),
 
+          EcgUploadPromoCard(
+            onTap: () {
+              Navigator.pushNamed(context, '/ecg-upload-analysis');
+            },
+          ),
+
           // TODAY'S OVERVIEW - Quick Stats
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

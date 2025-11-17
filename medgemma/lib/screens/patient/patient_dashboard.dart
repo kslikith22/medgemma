@@ -1,5 +1,6 @@
 // lib/screens/patient/patient_dashboard.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:medgemma/core/theme/app_colors.dart';
 import 'package:medgemma/screens/medicine_store_screen.dart';
 import 'package:medgemma/screens/patient/patient_medicine_tab.dart';
@@ -65,7 +66,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(_getAppBarTitle()),
+        title: Text(
+          _getAppBarTitle(),
+          style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textWhite,
         elevation: 0,
@@ -135,7 +139,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
   String _getAppBarTitle() {
     switch (_selectedIndex) {
       case 0:
-        return 'Patient Dashboard';
+        return 'Dashboard';
       case 1:
         return 'Appointments';
       case 2:
@@ -145,7 +149,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       case 4:
         return 'Profile';
       default:
-        return 'Patient Dashboard';
+        return 'Dashboard';
     }
   }
 

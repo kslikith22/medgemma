@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:medgemma/core/theme/app_colors.dart';
+import 'package:medgemma/screens/ecg_analysis_screen.dart';
 
 import 'screens/doctor/doctor_dashboard.dart';
 import 'screens/login_screen.dart';
@@ -44,6 +45,7 @@ class HospitalManagementApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         '/doctor-dashboard': (context) => DoctorDashboard(),
         '/patient-dashboard': (context) => PatientDashboard(),
+        '/ecg-upload-analysis': (context) => EcgUploadAndAnalysisScreen(),
       },
     );
   }

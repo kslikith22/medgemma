@@ -1,5 +1,6 @@
 // lib/screens/patient/patient_home_tab.dart
 import 'package:flutter/material.dart';
+import 'package:medgemma/screens/ecg_upload_card.dart';
 import 'package:medgemma/screens/specializations_screen.dart';
 import 'package:medgemma/service/appointment_service.dart';
 import 'package:medgemma/service/patient_service.dart';
@@ -92,32 +93,11 @@ class PatientHomeTab extends StatelessWidget {
             ),
           ),
 
-          // Quick Stats
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    'Total Appointments',
-                    appointments.length.toString(),
-                    Icons.calendar_month,
-                    Colors.blue,
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: _buildStatCard(
-                    'Upcoming',
-                    upcomingAppointments.length.toString(),
-                    Icons.upcoming,
-                    Colors.orange,
-                  ),
-                ),
-              ],
-            ),
+          EcgUploadPromoCard(
+            onTap: () {
+              Navigator.pushNamed(context, '/ecg-upload-analysis');
+            },
           ),
-
           // Upcoming Appointments
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -181,6 +161,31 @@ class PatientHomeTab extends StatelessWidget {
                 return _buildAppointmentCard(appointment, doctor, doctorUser);
               },
             ),
+
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Total Appointments',
+                    appointments.length.toString(),
+                    Icons.calendar_month,
+                    Colors.blue,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Upcoming',
+                    upcomingAppointments.length.toString(),
+                    Icons.upcoming,
+                    Colors.orange,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           SizedBox(height: 16),
 
